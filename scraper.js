@@ -41,15 +41,14 @@ function fetchPage(url, callback) {
 
 function run(db) {
 	// Use request to read in pages.
-	fetchPage("https://morph.io", function (body) {
+	fetchPage("https://metamaps.cc/maps/1938", function (body) {
 		// Use cheerio to find things in the page with css selectors.
 		var $ = cheerio.load(body);
+		var data = $("body script").get(0).children[0].data;
+		var Metamaps = { Active: { Map: null }, Mappers: null, Mappings: null, Topics: null, Visualize: { type: null } };
+		eval(data);
 
-		var elements = $("div.media-body span.p-name").each(function () {
-			var value = $(this).text().trim();
-			updateRow(db, value);
-		});
-
+		updateRow(db, JSON.stringify(Metamaps));
 		readRows(db);
 
 		db.close();
